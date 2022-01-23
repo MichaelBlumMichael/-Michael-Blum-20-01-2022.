@@ -1,0 +1,39 @@
+body {
+  background: linear-gradient(24deg, #ff9696 0%, #8c6bae 100%);
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  min-height: 100vh;
+}
+
+h1 {
+  margin: 0;
+}
+p {
+  margin: 0;
+}
+
+h2 {
+  margin: 0;
+}
+
+button {
+  padding: 0;
+  border: none;
+  outline: none;
+  font: inherit;
+  color: inherit;
+  background: none;
+  cursor: pointer;
+}
+
+li {
+  list-style-type: none;
+}
+ul {
+  margin: 0;
+}
+
+a {
+  text-decoration: none;
+  color: white;
+}

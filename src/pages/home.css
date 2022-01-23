@@ -1,0 +1,161 @@
+h1,
+p,
+span,
+img {
+  filter: drop-shadow(-4.51px 2.26px 0.75px rgba(0, 0, 0, 0.15));
+}
+
+.container__Home {
+  min-height: calc(100vh - 140px);
+  color: white;
+}
+
+.cards-container {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  padding-bottom: 1.875rem;
+}
+
+.card-info {
+  padding: 1em;
+}
+
+.day__Home {
+  font-size: 3rem;
+}
+
+.inner-temp__Home {
+  font-size: 1.5rem;
+  margin-top: 0.5em;
+}
+
+@media (max-width: 680px) {
+  .cards-container {
+    flex-direction: column;
+    padding-bottom: 0.625em;
+  }
+}
+
+.card {
+  min-height: 12.5em;
+  min-width: 6.875em;
+  border-radius: 11.3852px;
+  background: rgba(255, 255, 255, 0.2);
+  margin-top: 0.9375em;
+}
+
+.card-width__favorites {
+  max-width: 17em;
+  cursor: pointer;
+}
+
+.main__Home {
+  padding: 0 2em;
+}
+
+@media (min-width: 1024px) {
+  .main__Home {
+    padding: 0 6em;
+  }
+}
+
+.big-temperature__Home {
+  display: flex;
+  justify-content: space-between;
+}
+
+.big-temperature__Home h1 {
+  font-weight: 100;
+  font-size: 9.625rem;
+}
+
+.city__Home {
+  font-weight: 100;
+  font-size: 7rem;
+  margin-left: 0.9375em;
+}
+
+@media (max-width: 770px) {
+  .city__Home {
+    font-weight: 200;
+    font-size: 3rem;
+  }
+  .big-temperature__Home h1 {
+    font-weight: 100;
+    font-size: 6.625rem;
+  }
+}
+
+@media (max-width: 450px) {
+  .city__Home {
+    font-weight: 200;
+    font-size: 2rem;
+  }
+}
+
+.temprature__Home {
+  display: flex;
+}
+
+.temperatur-simbol__Home {
+  font-size: 2.125rem;
+}
+
+.date__Home {
+  font-size: 2.25rem;
+  font-weight: 300;
+  margin-bottom: 0.3125em;
+}
+
+.day-hour__Home {
+  font-size: 1.5rem;
+  font-weight: 300;
+  margin-bottom: 2.5em;
+}
+
+.conditions__Home {
+  display: flex;
+  justify-content: flex-start;
+
+  margin-bottom: 4.625em;
+}
+
+.img-span-container__Home {
+  display: flex;
+  align-items: center;
+  margin-right: 0.625rem;
+}
+
+.conditions__Home img {
+  margin: 0 10px;
+}
+
+.city-btn-container__Home {
+  text-align: right;
+}
+
+.btn__Home {
+  background-color: rgb(189, 164, 209);
+  color: rgb(17, 37, 100);
+  padding: 0.5em 1em;
+  border-radius: 10px;
+  margin-top: 0.3125em;
+  font-weight: 700;
+}
+
+.btn__Home:active {
+  background-color: rgb(195, 142, 238);
+}
+
+.search_Home {
+  margin-left: 1.875rem;
+}
+
+.autocomplete-wrapper__Home {
+  display: flex;
+  margin-top: 1.875rem;
+  margin-bottom: 3.125rem;
+  justify-content: center;
+  align-items: center;
+}
