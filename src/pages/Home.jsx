@@ -69,8 +69,9 @@ export default function Home() {
     date = format(formatDate, `do MMM yyyy`);
   }
 
-  let locationKey;
   const getCurrentLocationForcast = async () => {
+    let locationKey;
+
     try {
       let getGeo,
         currentLocationResponse = null;
@@ -118,6 +119,7 @@ export default function Home() {
       setLoading(false);
       setErrMsg(true);
     }
+    console.log({ locationKey });
   };
 
   useEffect(() => {
