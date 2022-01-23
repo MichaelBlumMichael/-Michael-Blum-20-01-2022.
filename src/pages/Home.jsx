@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import "./home.css";
 import Card from "../components/Card";
 import Autocomplete from "../components/Autocomplete";
-import axios from "axios";
-import { BASE_URL } from "../environment";
 import { API_KEY } from "../environment";
 import { DEFAULT_CITY_KEY } from "../environment";
 import { DEFAULT_CITY_NAME } from "../environment";
@@ -17,8 +15,8 @@ import {
   removeFromFavorites,
   setIsFromFavorites,
 } from "../redux/favoritesReducer";
-import { useAxios } from "../hooks/UseAxios";
 import { getLocationPromisified } from "../utilities/location";
+import { ApiRequest } from "../providers/accuWeather";
 
 export default function Home() {
   const [fiveDayForcast, setFiveDayForcast] = useState([]);
@@ -66,11 +64,11 @@ export default function Home() {
         try {
           getGeo = await getLocationPromisified();
           if (getGeo) {
-            currentLocationResponse = await axios.get(
-              `${BASE_URL}/locations/v1/cities/geoposition/search?apikey=${API_KEY}&q=${getGeo.latitude}%2C${getGeo.longitude}`
+            currentLocationResponse = await ApiRequest(
+              "get",
+              `/locations/v1/cities/geoposition/search?apikey=${API_KEY}&q=${getGeo.latitude}%2C${getGeo.longitude}`
             );
-
-            locationKey = currentLocationResponse.data.Key;
+            locationKey = currentLocationResponse.Key;
 
             setKey(locationKey);
           }
@@ -92,17 +90,19 @@ export default function Home() {
         setKey(locationKey);
         setLocationName(favoriteToHome.locationName);
       }
-      //
-      const currentTimeWhetherResponse = await axios.get(
-        `${BASE_URL}/currentconditions/v1/${locationKey}/?apikey=${API_KEY}`
+
+      const currentTimeWhetherResponse = await ApiRequest(
+        "get",
+        `/currentconditions/v1/${locationKey}/?apikey=${API_KEY}`
       );
 
-      const fiveDayForcastResponse = await axios.get(
-        `${BASE_URL}/forecasts/v1/daily/5day/${locationKey}?apikey=${API_KEY}&metric=true`
+      const fiveDayForcastResponse = await ApiRequest(
+        "get",
+        `/forecasts/v1/daily/5day/${locationKey}?apikey=${API_KEY}&metric=true`
       );
-      //
-      setFiveDayForcast(fiveDayForcastResponse.data);
-      setCurrentWhether(currentTimeWhetherResponse.data);
+
+      setFiveDayForcast(fiveDayForcastResponse);
+      setCurrentWhether(currentTimeWhetherResponse);
       setLoading(false);
     } catch (err) {
       console.error(err);
