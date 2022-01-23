@@ -68,6 +68,13 @@ export default function Favorites() {
   };
 
   console.log({ addNameToResponse });
+  if (!addNameToResponse.length) {
+    return (
+      <div className="main__Favorites">
+        <h1>No Favorite Cities yet...</h1>
+      </div>
+    );
+  }
   return (
     <div className="container__Favorites">
       <main className="main__Favorites">
