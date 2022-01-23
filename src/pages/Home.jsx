@@ -18,20 +18,7 @@ import {
   setIsFromFavorites,
 } from "../redux/favoritesReducer";
 import { useAxios } from "../hooks/UseAxios";
-
-let getLocation = () => {
-  const promise = new Promise((resolve, reject) =>
-    navigator.geolocation.getCurrentPosition(
-      (success) => {
-        resolve(success.coords);
-      },
-      (error) => {
-        reject(error);
-      }
-    )
-  );
-  return promise;
-};
+import { getLocationPromisified } from "../utilities/location";
 
 export default function Home() {
   const [fiveDayForcast, setFiveDayForcast] = useState([]);
@@ -77,13 +64,15 @@ export default function Home() {
         currentLocationResponse = null;
       if (!searchObj && !isFromFavorites) {
         try {
-          getGeo = await getLocation();
+          getGeo = await getLocationPromisified();
           if (getGeo) {
             currentLocationResponse = await axios.get(
               `${BASE_URL}/locations/v1/cities/geoposition/search?apikey=${API_KEY}&q=${getGeo.latitude}%2C${getGeo.longitude}`
             );
+
             locationKey = currentLocationResponse.data.Key;
-            setKey(currentLocationResponse.data.Key);
+
+            setKey(locationKey);
           }
           setLocationName(currentLocationResponse.data.LocalizedName);
         } catch (err) {
@@ -100,10 +89,10 @@ export default function Home() {
       }
       if (isFromFavorites) {
         locationKey = favoriteToHome.key;
-        setKey(favoriteToHome.key);
+        setKey(locationKey);
         setLocationName(favoriteToHome.locationName);
       }
-
+      //
       const currentTimeWhetherResponse = await axios.get(
         `${BASE_URL}/currentconditions/v1/${locationKey}/?apikey=${API_KEY}`
       );
@@ -111,6 +100,7 @@ export default function Home() {
       const fiveDayForcastResponse = await axios.get(
         `${BASE_URL}/forecasts/v1/daily/5day/${locationKey}?apikey=${API_KEY}&metric=true`
       );
+      //
       setFiveDayForcast(fiveDayForcastResponse.data);
       setCurrentWhether(currentTimeWhetherResponse.data);
       setLoading(false);
