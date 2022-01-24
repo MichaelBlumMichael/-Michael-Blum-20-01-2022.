@@ -22,3 +22,9 @@ export const toasterReducer = (state, action) => {
       return state;
   }
 };
+
+export const initialToasterState = {
+  openToast: false,
+  toastMessage: "",
+  toastSeverity: "",
+};

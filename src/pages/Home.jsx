@@ -17,13 +17,13 @@ import {
 } from "../redux/favoritesReducer";
 import { getLocationPromisified } from "../utilities/location";
 import { ApiRequest } from "../providers/accuWeather";
-import { toasterReducer } from "../utilities/toastReducer";
+import { toasterReducer, initialToasterState } from "../utilities/toastReducer";
+import {
+  forcastReducer,
+  initialForcastState,
+} from "../utilities/forcastReducer";
 
 export default function Home() {
-  const [fiveDayForcast, setFiveDayForcast] = useState([]);
-  const [key, setKey] = useState(null);
-  const [currentWeather, setCurrentWeather] = useState([]);
-  const [locationName, setLocationName] = useState("");
   const [loading, setLoading] = useState(false);
   const [errMsg, setErrMsg] = useState(false);
   const [searchObj, setSearchObj] = useState(null);
@@ -33,21 +33,24 @@ export default function Home() {
   const metricOrImperial = useSelector((state) => state.app.temperatureValue);
   const favoriteToHome = getFavorites?.favoriteToHome;
 
-  const [toasterState, dispatchToaster] = useReducer(toasterReducer, {
-    openToast: false,
-    toastMessage: "",
-    toastSeverity: "",
-  });
+  const [toasterState, dispatchToaster] = useReducer(
+    toasterReducer,
+    initialToasterState
+  );
+
+  const [forcastState, dispatchForcast] = useReducer(
+    forcastReducer,
+    initialForcastState
+  );
 
   const isCurrentFavorite = getFavorites?.favoriteLocatins?.find(
-    (fav) => fav.locationName === locationName
+    (fav) => fav.locationName === forcastState.locationName
   );
 
   const currentTemperatur =
-    currentWeather[0]?.Temperature[metricOrImperial].Value;
-  console.log({ currentWeather });
+    forcastState.currentWeather[0]?.Temperature[metricOrImperial].Value;
 
-  const currentTime = currentWeather?.find(
+  const currentTime = forcastState.currentWeather?.find(
     (item) => item?.LocalObservationDateTime !== null
   )?.LocalObservationDateTime;
 
@@ -59,7 +62,7 @@ export default function Home() {
     date = format(formatDate, `do MMM yyyy`);
   }
 
-  const getCurrentLocationForcast = React.useCallback(async () => {
+  const getCurrentLocationForcast = async () => {
     let locationKey;
 
     try {
@@ -75,26 +78,37 @@ export default function Home() {
             );
             locationKey = currentLocationResponse.Key;
 
-            setKey(locationKey);
+            dispatchForcast({ type: "KEY", val: locationKey });
           }
-          setLocationName(currentLocationResponse.data.LocalizedName);
+          dispatchForcast({
+            type: "LOCATION_NAME",
+            val: currentLocationResponse.data.LocalizedName,
+          });
         } catch (err) {
           console.log(err);
           locationKey = DEFAULT_CITY_KEY;
-          setKey(locationKey);
-          setLocationName(DEFAULT_CITY_NAME);
+
+          dispatchForcast({ type: "KEY", val: locationKey });
+          dispatchForcast({ type: "LOCATION_NAME", val: DEFAULT_CITY_NAME });
         }
       }
       if (searchObj) {
-        console.log({ searchObj });
         locationKey = searchObj.Key;
-        setKey(searchObj.Key);
-        setLocationName(searchObj.LocalizedName);
+        dispatchForcast({ type: "KEY", val: searchObj.Key });
+
+        dispatchForcast({
+          type: "LOCATION_NAME",
+          val: searchObj.LocalizedName,
+        });
       }
       if (isFromFavorites) {
         locationKey = favoriteToHome.key;
-        setKey(locationKey);
-        setLocationName(favoriteToHome.locationName);
+        dispatchForcast({ type: "KEY", val: locationKey });
+
+        dispatchForcast({
+          type: "LOCATION_NAME",
+          val: favoriteToHome.locationName,
+        });
       }
 
       const currentTimeWeatherResponse = await ApiRequest(
@@ -109,21 +123,19 @@ export default function Home() {
         }`
       );
 
-      setFiveDayForcast(fiveDayForcastResponse);
-      setCurrentWeather(currentTimeWeatherResponse);
+      dispatchForcast({ type: "FIVE_DAY", val: fiveDayForcastResponse });
+      dispatchForcast({
+        type: "CURRENT_WEATHER",
+        val: currentTimeWeatherResponse,
+      });
+
       setLoading(false);
     } catch (err) {
       console.error(err);
       setLoading(false);
       setErrMsg(true);
     }
-  }, [
-    metricOrImperial,
-    currentWeather,
-    fiveDayForcast,
-    locationName,
-    searchObj,
-  ]);
+  };
 
   useEffect(() => {
     setLoading(true);
@@ -142,6 +154,10 @@ export default function Home() {
       clearTimeout();
       return;
     }
+
+    const { currentWeather } = forcastState;
+    const { locationName } = forcastState;
+    const { key } = forcastState;
 
     dispatch(
       setfavoriteLocationsKeys({
@@ -189,7 +205,7 @@ export default function Home() {
             </span>
           </div>
           <div className="city-btn-container__Home">
-            <h2 className="city__Home">{locationName}</h2>
+            <h2 className="city__Home">{forcastState.locationName}</h2>
             <button onClick={favoritesHandler} className="btn__Home">
               {isCurrentFavorite ? "Remove from favorites" : "Add to favorites"}
             </button>
@@ -209,7 +225,7 @@ export default function Home() {
             toastMessage={toasterState.toastMessage}
             openToast={toasterState.openToast}
           />
-          {fiveDayForcast?.DailyForecasts?.map((day, index) => {
+          {forcastState.fiveDayForcast?.DailyForecasts?.map((day, index) => {
             return (
               <Card key={index}>
                 <div className="card-info">
