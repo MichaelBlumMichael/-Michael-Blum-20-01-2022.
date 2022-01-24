@@ -7,7 +7,7 @@ import "./header.css";
 export default function Header() {
   return (
     <div className="container__Header">
-      <span>Herolo Whether app</span>
+      <span>Herolo Weather app</span>
       <nav>
         <ul className="ul__Header">
           <li className="btn__Header" type="button">

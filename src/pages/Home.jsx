@@ -23,7 +23,7 @@ import { ApiRequest } from "../providers/accuWeather";
 export default function Home() {
   const [fiveDayForcast, setFiveDayForcast] = useState([]);
   const [key, setKey] = useState(null);
-  const [currentWhether, setCurrentWhether] = useState([]);
+  const [currentWeather, setCurrentWeather] = useState([]);
   const [locationName, setLocationName] = useState("");
   const [loading, setLoading] = useState(false);
   const [errMsg, setErrMsg] = useState(false);
@@ -42,13 +42,13 @@ export default function Home() {
     (fav) => fav.locationName === locationName
   );
 
-  // console.log({ fiveDayForcast, currentWhether, locationName, getFavorites });
+  // console.log({ fiveDayForcast, currentWeather, locationName, getFavorites });
   //current temprature
   const currentTemperatur =
-    currentWhether[0]?.Temperature[metricOrImperial].Value;
-  console.log({ currentWhether });
+    currentWeather[0]?.Temperature[metricOrImperial].Value;
+  console.log({ currentWeather });
 
-  const currentTime = currentWhether?.find(
+  const currentTime = currentWeather?.find(
     (item) => item?.LocalObservationDateTime !== null
   )?.LocalObservationDateTime;
 
@@ -97,7 +97,7 @@ export default function Home() {
         setLocationName(favoriteToHome.locationName);
       }
 
-      const currentTimeWhetherResponse = await ApiRequest(
+      const currentTimeWeatherResponse = await ApiRequest(
         "get",
         `/currentconditions/v1/${locationKey}/?apikey=${API_KEY}`
       );
@@ -111,7 +111,7 @@ export default function Home() {
       );
 
       setFiveDayForcast(fiveDayForcastResponse);
-      setCurrentWhether(currentTimeWhetherResponse);
+      setCurrentWeather(currentTimeWeatherResponse);
       setLoading(false);
     } catch (err) {
       console.error(err);
@@ -144,7 +144,7 @@ export default function Home() {
     dispatch(
       setfavoriteLocationsKeys({
         key,
-        currentWhether,
+        currentWeather,
         locationName,
       })
     );
