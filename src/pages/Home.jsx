@@ -122,13 +122,6 @@ export default function Home() {
     currentWeather,
     fiveDayForcast,
     locationName,
-    // ApiRequest,
-    // isCurrentFavorite,
-    // loading,
-    // errMsg,
-    // currentTemperatur,
-    // date,
-    // key,
     searchObj,
   ]);
 

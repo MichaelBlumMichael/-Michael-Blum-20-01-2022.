@@ -44,20 +44,19 @@ export default function Favorites() {
     );
   });
 
-  const getForcasts = () => {
-    axios
-      .all(getRequests)
-      .then(
-        axios.spread((...responses) => {
-          setResponses(responses);
-        })
-      )
-      .catch((errors) => {
-        console.error(errors);
-      });
-  };
-
   useEffect(() => {
+    const getForcasts = () => {
+      axios
+        .all(getRequests)
+        .then(
+          axios.spread((...responses) => {
+            setResponses(responses);
+          })
+        )
+        .catch((errors) => {
+          console.error(errors);
+        });
+    };
     getForcasts();
   }, []);
 

@@ -24,13 +24,6 @@ export default function FreeSolo({ setSearchObj }) {
   let dataMap = [];
   if (data.length > 0) dataMap = data?.map((option) => option.LocalizedName);
 
-  // const [selectedOptions, setSelectedOptions] = useState();
-  // console.log({ selectedOptions });
-
-  // const handleChange = (event, value) => {
-  //   console.log({ event });
-  //   setSelectedOptions(event);
-  // };
   return (
     <React.Fragment>
       <Stack spacing={2} sx={{ width: 300 }}>
@@ -42,7 +35,6 @@ export default function FreeSolo({ setSearchObj }) {
             return (
               <TextField
                 onChange={() => {
-                  // handleChange(params?.inputProps.value);
                   searchLocation(params?.inputProps.value);
                 }}
                 onBlur={() => searchLocation(params?.inputProps.value)}
