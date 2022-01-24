@@ -16,7 +16,6 @@ import {
   removeFromFavorites,
   setIsFromFavorites,
 } from "../redux/favoritesReducer";
-import { changeTempTypeValue } from "../redux/appReducer";
 import { getLocationPromisified } from "../utilities/location";
 import { ApiRequest } from "../providers/accuWeather";
 
@@ -28,7 +27,6 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [errMsg, setErrMsg] = useState(false);
   const [searchObj, setSearchObj] = useState(null);
-
   const [openToast, setOpenToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [toastSeverity, setToastSeverity] = useState("");
@@ -60,7 +58,7 @@ export default function Home() {
     date = format(formatDate, `do MMM yyyy`);
   }
 
-  const getCurrentLocationForcast = async () => {
+  const getCurrentLocationForcast = React.useCallback(async () => {
     let locationKey;
 
     try {
@@ -87,6 +85,7 @@ export default function Home() {
         }
       }
       if (searchObj) {
+        console.log({ searchObj });
         locationKey = searchObj.Key;
         setKey(searchObj.Key);
         setLocationName(searchObj.LocalizedName);
@@ -118,8 +117,20 @@ export default function Home() {
       setLoading(false);
       setErrMsg(true);
     }
-    console.log({ locationKey });
-  };
+  }, [
+    metricOrImperial,
+    currentWeather,
+    fiveDayForcast,
+    locationName,
+    // ApiRequest,
+    // isCurrentFavorite,
+    // loading,
+    // errMsg,
+    // currentTemperatur,
+    // date,
+    // key,
+    searchObj,
+  ]);
 
   useEffect(() => {
     setLoading(true);
