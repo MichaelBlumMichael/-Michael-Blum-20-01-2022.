@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useReducer } from "react";
 import "./home.css";
 import Card from "../components/Card";
 import Switch from "../components/Switch";
@@ -8,7 +8,6 @@ import { DEFAULT_CITY_KEY } from "../environment";
 import { DEFAULT_CITY_NAME } from "../environment";
 import { format } from "date-fns";
 import Loader from "../components/Loader";
-// import Button from "../components/Button";
 import Toaster from "../components/Toaster";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -18,6 +17,7 @@ import {
 } from "../redux/favoritesReducer";
 import { getLocationPromisified } from "../utilities/location";
 import { ApiRequest } from "../providers/accuWeather";
+import { toasterReducer } from "../utilities/toastReducer";
 
 export default function Home() {
   const [fiveDayForcast, setFiveDayForcast] = useState([]);
@@ -27,21 +27,22 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [errMsg, setErrMsg] = useState(false);
   const [searchObj, setSearchObj] = useState(null);
-  const [openToast, setOpenToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState("");
-  const [toastSeverity, setToastSeverity] = useState("");
 
   const getFavorites = useSelector((state) => state.favorites);
   const isFromFavorites = useSelector((state) => state.favorites.fromFavorites);
   const metricOrImperial = useSelector((state) => state.app.temperatureValue);
   const favoriteToHome = getFavorites?.favoriteToHome;
 
+  const [toasterState, dispatchToaster] = useReducer(toasterReducer, {
+    openToast: false,
+    toastMessage: "",
+    toastSeverity: "",
+  });
+
   const isCurrentFavorite = getFavorites?.favoriteLocatins?.find(
     (fav) => fav.locationName === locationName
   );
 
-  // console.log({ fiveDayForcast, currentWeather, locationName, getFavorites });
-  //current temprature
   const currentTemperatur =
     currentWeather[0]?.Temperature[metricOrImperial].Value;
   console.log({ currentWeather });
@@ -101,7 +102,6 @@ export default function Home() {
         `/currentconditions/v1/${locationKey}/?apikey=${API_KEY}`
       );
 
-      //five day temprature
       const fiveDayForcastResponse = await ApiRequest(
         "get",
         `/forecasts/v1/daily/5day/${locationKey}?apikey=${API_KEY}&metric=${
@@ -135,11 +135,9 @@ export default function Home() {
   const favoritesHandler = () => {
     if (isCurrentFavorite) {
       dispatch(removeFromFavorites(isCurrentFavorite.locationName));
-      setOpenToast(true);
-      setToastMessage("Removed from favorites!");
-      setToastSeverity("warning");
+      dispatchToaster({ type: "TOASTER_OPEN_WARNING", val: true });
       setTimeout(() => {
-        setOpenToast(false);
+        dispatchToaster({ type: "CLOSE_TOAST", val: false });
       }, 3000);
       clearTimeout();
       return;
@@ -152,11 +150,9 @@ export default function Home() {
         locationName,
       })
     );
-    setOpenToast(true);
-    setToastMessage("Added to favorites!");
-    setToastSeverity("success");
+    dispatchToaster({ type: "TOASTER_OPEN_ADDED", val: true });
     setTimeout(() => {
-      setOpenToast(false);
+      dispatchToaster({ type: "CLOSE_TOAST", val: false });
     }, 3000);
     clearTimeout();
   };
@@ -209,9 +205,9 @@ export default function Home() {
         </section>
         <div className="cards-container">
           <Toaster
-            toastSeverity={toastSeverity}
-            toastMessage={toastMessage}
-            openToast={openToast}
+            toastSeverity={toasterState.toastSeverity}
+            toastMessage={toasterState.toastMessage}
+            openToast={toasterState.openToast}
           />
           {fiveDayForcast?.DailyForecasts?.map((day, index) => {
             return (
