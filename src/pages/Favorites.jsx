@@ -36,7 +36,6 @@ export default function Favorites() {
       }
     }
   });
-  console.log({ responses, getResData, getFavorites });
 
   const getRequests = getFavorites?.favoriteLocatins.map((fav) => {
     return axios.get(
@@ -61,13 +60,11 @@ export default function Favorites() {
   }, []);
 
   const handleClick = (favToSend) => {
-    console.log({ favToSend });
     dispatch(setFavoritePassToHome(favToSend));
     dispatch(setIsFromFavorites(true));
     navigate("/");
   };
 
-  console.log({ addNameToResponse });
   if (!addNameToResponse.length) {
     return (
       <div className="main__Favorites">
