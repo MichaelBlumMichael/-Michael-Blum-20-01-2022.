@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./home.css";
 import Card from "../components/Card";
+import Switch from "../components/Switch";
 import Autocomplete from "../components/Autocomplete";
 import { API_KEY } from "../environment";
 import { DEFAULT_CITY_KEY } from "../environment";
@@ -15,6 +16,7 @@ import {
   removeFromFavorites,
   setIsFromFavorites,
 } from "../redux/favoritesReducer";
+import { changeTempTypeValue } from "../redux/appReducer";
 import { getLocationPromisified } from "../utilities/location";
 import { ApiRequest } from "../providers/accuWeather";
 
@@ -33,6 +35,7 @@ export default function Home() {
 
   const getFavorites = useSelector((state) => state.favorites);
   const isFromFavorites = useSelector((state) => state.favorites.fromFavorites);
+  const metricOrImperial = useSelector((state) => state.app.temperatureValue);
   const favoriteToHome = getFavorites?.favoriteToHome;
 
   const isCurrentFavorite = getFavorites?.favoriteLocatins?.find(
@@ -40,7 +43,10 @@ export default function Home() {
   );
 
   // console.log({ fiveDayForcast, currentWhether, locationName, getFavorites });
-  const currentTemperatur = currentWhether[0]?.Temperature.Metric.Value;
+  //current temprature
+  const currentTemperatur =
+    currentWhether[0]?.Temperature[metricOrImperial].Value;
+  console.log({ currentWhether });
 
   const currentTime = currentWhether?.find(
     (item) => item?.LocalObservationDateTime !== null
@@ -96,9 +102,12 @@ export default function Home() {
         `/currentconditions/v1/${locationKey}/?apikey=${API_KEY}`
       );
 
+      //five day temprature
       const fiveDayForcastResponse = await ApiRequest(
         "get",
-        `/forecasts/v1/daily/5day/${locationKey}?apikey=${API_KEY}&metric=true`
+        `/forecasts/v1/daily/5day/${locationKey}?apikey=${API_KEY}&metric=${
+          metricOrImperial === "Metric" ? "true" : "false"
+        }`
       );
 
       setFiveDayForcast(fiveDayForcastResponse);
@@ -115,7 +124,7 @@ export default function Home() {
   useEffect(() => {
     setLoading(true);
     getCurrentLocationForcast();
-  }, []);
+  }, [metricOrImperial]);
 
   const dispatch = useDispatch();
 
@@ -171,10 +180,13 @@ export default function Home() {
         </button>
       </div>
       <main className="main__Home">
+        <Switch />
         <section className="big-temperature__Home">
           <div className="temprature__Home">
             <h1>{currentTemperatur}</h1>
-            <span className="temperatur-simbol__Home">°C</span>
+            <span className="temperatur-simbol__Home">
+              °{metricOrImperial === "Metric" ? "C" : "F"}
+            </span>
           </div>
           <div className="city-btn-container__Home">
             <h2 className="city__Home">{locationName}</h2>
@@ -206,10 +218,12 @@ export default function Home() {
                   </p>
 
                   <p className="inner-temp__Home">
-                    Max: {day.Temperature.Maximum.Value}°c
+                    Max: {day.Temperature.Maximum.Value}°
+                    {metricOrImperial === "Metric" ? "C" : "F"}
                   </p>
                   <p className="inner-temp__Home">
-                    Min: {day.Temperature.Minimum.Value}°c
+                    Min: {day.Temperature.Minimum.Value}°
+                    {metricOrImperial === "Metric" ? "C" : "F"}
                   </p>
                 </div>
               </Card>

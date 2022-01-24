@@ -19,6 +19,7 @@ export default function Favorites() {
   const getResData = responses.map((res) => res.data);
 
   const getFavorites = useSelector((state) => state.favorites);
+  const metricOrImperial = useSelector((state) => state.app.temperatureValue);
 
   const getFavsKeysNames = getFavorites.favoriteLocatins.map((fav) => {
     return { key: fav.key, locationName: fav.locationName };
@@ -85,7 +86,8 @@ export default function Favorites() {
               <div onClick={() => handleClick(fav)} className="card-info">
                 <p className="day__Home">{fav.locationName}</p>
                 <p className="inner-temp__Home">
-                  {fav?.Temperature?.Metric?.Value}°
+                  {fav?.Temperature[metricOrImperial]?.Value}°
+                  {metricOrImperial === "Metric" ? "C" : "F"}
                 </p>
                 <p className="inner-temp__Home">{fav.WeatherText}</p>
               </div>

@@ -10,6 +10,15 @@ img {
   color: white;
 }
 
+.switch__Home {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+.switch__Home span {
+  margin-right: 0.3125em;
+}
+
 .cards-container {
   display: flex;
   justify-content: space-between;
