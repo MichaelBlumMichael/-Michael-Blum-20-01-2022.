@@ -24,19 +24,33 @@ export default function FreeSolo({ setSearchObj }) {
   let dataMap = [];
   if (data.length > 0) dataMap = data?.map((option) => option.LocalizedName);
 
+  const [inputState, setInputState] = useState("");
+
+  const handleInputChange = (value) => {
+    setInputState(() => {
+      let onlyEngLetters = /^[a-zA-Z]+$/.test(value);
+      if (onlyEngLetters && value !== "") {
+        searchLocation(value);
+        return value;
+      }
+      return "";
+    });
+  };
+
   return (
     <React.Fragment>
       <Stack spacing={2} sx={{ width: 300 }}>
         <Autocomplete
           id="free-solo-demo"
-          freeSolo
+          freeSolo={true}
+          blurOnSelect={true}
           options={dataMap}
+          autoSelect={true}
+          inputValue={inputState}
+          onInputChange={(e, value, reason) => handleInputChange(value)}
           renderInput={(params) => {
             return (
               <TextField
-                onChange={() => {
-                  searchLocation(params?.inputProps.value);
-                }}
                 onBlur={() => searchLocation(params?.inputProps.value)}
                 {...params}
                 label="Search location..."
