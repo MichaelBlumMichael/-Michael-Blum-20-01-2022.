@@ -25,25 +25,29 @@ export default function Favorites() {
     return { key: fav.key, locationName: fav.locationName };
   });
 
+  console.log(getResData);
+
   const addNameToResponse = getResData.map((res) => {
+    let modifyedRespnse = {};
     for (let keyName of getFavsKeysNames) {
       if (res[0].Link.includes(keyName.key)) {
-        return {
+        modifyedRespnse = {
           ...res[0],
           key: keyName.key,
           locationName: keyName.locationName,
         };
       }
     }
-  });
-
-  const getRequests = getFavorites?.favoriteLocatins.map((fav) => {
-    return axios.get(
-      `${BASE_URL}/currentconditions/v1/${fav.key}/?apikey=${API_KEY}`
-    );
+    return modifyedRespnse;
   });
 
   useEffect(() => {
+    const getRequests = getFavorites?.favoriteLocatins.map((fav) => {
+      return axios.get(
+        `${BASE_URL}/currentconditions/v1/${fav.key}/?apikey=${API_KEY}`
+      );
+    });
+
     const getForcasts = () => {
       axios
         .all(getRequests)
@@ -57,7 +61,7 @@ export default function Favorites() {
         });
     };
     getForcasts();
-  }, []);
+  }, [getFavorites?.favoriteLocatins]);
 
   const handleClick = (favToSend) => {
     dispatch(setFavoritePassToHome(favToSend));
