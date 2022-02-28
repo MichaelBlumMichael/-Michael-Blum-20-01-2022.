@@ -1,21 +1,21 @@
-import { useEffect, useState, useReducer } from "react";
-import { API_KEY } from "../environment";
-import { DEFAULT_CITY_KEY } from "../environment";
-import { DEFAULT_CITY_NAME } from "../environment";
-import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useState, useReducer } from 'react';
+import { API_KEY } from '../environment';
+import { DEFAULT_CITY_KEY } from '../environment';
+import { DEFAULT_CITY_NAME } from '../environment';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   setfavoriteLocationsKeys,
   removeFromFavorites,
   setIsFromFavorites,
-} from "../redux/favoritesReducer";
-import { getLocationPromisified } from "../utilities/location";
-import { ApiRequest } from "../providers/accuWeather";
-import { toasterReducer, initialToasterState } from "../utilities/toastReducer";
+} from '../redux/favoritesReducer';
+import { getLocationPromisified } from '../utilities/location';
+import { ApiRequest } from '../providers/accuWeather';
+import { toasterReducer, initialToasterState } from '../utilities/toastReducer';
 import {
   forcastReducer,
   initialForcastState,
-} from "../utilities/forcastReducer";
-import { format } from "date-fns";
+} from '../utilities/forcastReducer';
+import { format } from 'date-fns';
 
 export const useForcast = () => {
   const [loading, setLoading] = useState(false);
@@ -67,59 +67,59 @@ export const useForcast = () => {
           getGeo = await getLocationPromisified();
           if (getGeo) {
             currentLocationResponse = await ApiRequest(
-              "get",
+              'get',
               `/locations/v1/cities/geoposition/search?apikey=${API_KEY}&q=${getGeo.latitude}%2C${getGeo.longitude}`
             );
             locationKey = currentLocationResponse.Key;
 
-            dispatchForcast({ type: "KEY", val: locationKey });
+            dispatchForcast({ type: 'KEY', val: locationKey });
           }
           dispatchForcast({
-            type: "LOCATION_NAME",
+            type: 'LOCATION_NAME',
             val: currentLocationResponse.data.LocalizedName,
           });
         } catch (err) {
           console.log(err);
           locationKey = DEFAULT_CITY_KEY;
 
-          dispatchForcast({ type: "KEY", val: locationKey });
-          dispatchForcast({ type: "LOCATION_NAME", val: DEFAULT_CITY_NAME });
+          dispatchForcast({ type: 'KEY', val: locationKey });
+          dispatchForcast({ type: 'LOCATION_NAME', val: DEFAULT_CITY_NAME });
         }
       }
       if (searchObj) {
         locationKey = searchObj.Key;
-        dispatchForcast({ type: "KEY", val: searchObj.Key });
+        dispatchForcast({ type: 'KEY', val: searchObj.Key });
 
         dispatchForcast({
-          type: "LOCATION_NAME",
+          type: 'LOCATION_NAME',
           val: searchObj.LocalizedName,
         });
       }
       if (isFromFavorites) {
         locationKey = favoriteToHome.key;
-        dispatchForcast({ type: "KEY", val: locationKey });
+        dispatchForcast({ type: 'KEY', val: locationKey });
 
         dispatchForcast({
-          type: "LOCATION_NAME",
+          type: 'LOCATION_NAME',
           val: favoriteToHome.locationName,
         });
       }
 
       const currentTimeWeatherResponse = await ApiRequest(
-        "get",
+        'get',
         `/currentconditions/v1/${locationKey}/?apikey=${API_KEY}`
       );
 
       const fiveDayForcastResponse = await ApiRequest(
-        "get",
+        'get',
         `/forecasts/v1/daily/5day/${locationKey}?apikey=${API_KEY}&metric=${
-          metricOrImperial === "Metric" ? "true" : "false"
+          metricOrImperial === 'Metric' ? 'true' : 'false'
         }`
       );
 
-      dispatchForcast({ type: "FIVE_DAY", val: fiveDayForcastResponse });
+      dispatchForcast({ type: 'FIVE_DAY', val: fiveDayForcastResponse });
       dispatchForcast({
-        type: "CURRENT_WEATHER",
+        type: 'CURRENT_WEATHER',
         val: currentTimeWeatherResponse,
       });
 
@@ -141,9 +141,9 @@ export const useForcast = () => {
   const favoritesHandler = () => {
     if (isCurrentFavorite) {
       dispatch(removeFromFavorites(isCurrentFavorite.locationName));
-      dispatchToaster({ type: "TOASTER_OPEN_WARNING", val: true });
+      dispatchToaster({ type: 'TOASTER_OPEN_WARNING', val: true });
       setTimeout(() => {
-        dispatchToaster({ type: "CLOSE_TOAST", val: false });
+        dispatchToaster({ type: 'CLOSE_TOAST', val: false });
       }, 3000);
       clearTimeout();
       return;
@@ -160,9 +160,9 @@ export const useForcast = () => {
         locationName,
       })
     );
-    dispatchToaster({ type: "TOASTER_OPEN_ADDED", val: true });
+    dispatchToaster({ type: 'TOASTER_OPEN_ADDED', val: true });
     setTimeout(() => {
-      dispatchToaster({ type: "CLOSE_TOAST", val: false });
+      dispatchToaster({ type: 'CLOSE_TOAST', val: false });
     }, 3000);
     clearTimeout();
   };

@@ -1,12 +1,12 @@
-import React, { useState } from "react";
-import TextField from "@mui/material/TextField";
-import Autocomplete from "@mui/material/Autocomplete";
-import { BASE_URL } from "../environment";
-import axios from "axios";
-import { API_KEY } from "../environment";
-import Stack from "@mui/material/Stack";
+import React, { useState } from 'react';
+import TextField from '@mui/material/TextField';
+import Autocomplete from '@mui/material/Autocomplete';
+import { BASE_URL } from '../environment';
+import axios from 'axios';
+import { API_KEY } from '../environment';
+import Stack from '@mui/material/Stack';
 
-export default function FreeSolo({ setSearchObj }) {
+export default function FreeSolo({ searchHandler, setSearchObj }) {
   const [data, setData] = useState([]);
 
   const searchLocation = async (searchVal) => {
@@ -24,16 +24,16 @@ export default function FreeSolo({ setSearchObj }) {
   let dataMap = [];
   if (data.length > 0) dataMap = data?.map((option) => option.LocalizedName);
 
-  const [inputState, setInputState] = useState("");
+  const [inputState, setInputState] = useState('');
 
   const handleInputChange = (value) => {
     setInputState(() => {
       let onlyEngLetters = /^[a-zA-Z]+$/.test(value);
-      if (onlyEngLetters && value !== "") {
+      if (onlyEngLetters && value !== '') {
         searchLocation(value);
         return value;
       }
-      return "";
+      return '';
     });
   };
 
@@ -41,7 +41,7 @@ export default function FreeSolo({ setSearchObj }) {
     <React.Fragment>
       <Stack spacing={2} sx={{ width: 300 }}>
         <Autocomplete
-          id="free-solo-demo"
+          id='free-solo-demo'
           freeSolo={true}
           blurOnSelect={true}
           options={dataMap}
@@ -53,12 +53,15 @@ export default function FreeSolo({ setSearchObj }) {
               <TextField
                 onBlur={() => searchLocation(params?.inputProps.value)}
                 {...params}
-                label="Search location..."
+                label='Search location...'
               />
             );
           }}
         />
       </Stack>
+      <button onClick={searchHandler} className='btn__Home search_Home'>
+        Search!
+      </button>
     </React.Fragment>
   );
 }
